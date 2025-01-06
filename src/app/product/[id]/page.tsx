@@ -1,38 +1,64 @@
-import CustomImage from "@/components/image";
-import { notFound } from "next/navigation";
+import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
+import { useRouter } from 'next/router';
+import Image from 'next/image';
 
-interface Props {
-  params: {
-    id: string;
-  };
+interface Product {
+  id: string;
+  name: string;
+  description: string;
+  imageUrl: string;
+  price: number;
 }
 
-const ProductDetailedPage = async ({ params: { id } }: Props) => {
-  try {
-    const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-    const product = await res.json();
+interface PageProps {
+  product: Product;
+}
 
-    return (
-      <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 px-4 mt-48 pb-10">
-        <CustomImage product={product} />
+export const getStaticProps: GetStaticProps<PageProps> = async ({ params }) => {
+  const { id } = params as { id: string };
 
-        <div className="divide-2">
-          <div className="space-y-2 pb-8">
-            <h1 className="text-2xl md:text-4xl font-bold">{product.title}</h1>
-            <h2 className="text-gray-500 font-bold text-xl md:text-3xl">
-              ${product.price}
-            </h2>
-          </div>
+  // Mahsulot ma'lumotlarini olish
+  const res = await fetch(`https://api.example.com/products/${id}`);
+  const product: Product = await res.json();
 
-          <div>
-            <p className="text-xs md:text-sm">{product.description}</p>
-          </div>
-        </div>
-      </div>
-    );
-  } catch (error) {
-    notFound();
-  }
+  return {
+    props: {
+      product,
+    },
+  };
 };
 
-export default ProductDetailedPage;
+export const getStaticPaths: GetStaticPaths = async () => {
+  // Mavjud mahsulot IDlarini olish
+  const res = await fetch('https://api.example.com/products');
+  const products: Product[] = await res.json();
+
+  const paths = products.map((product) => ({
+    params: { id: product.id },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+const ProductPage: NextPage<PageProps> = ({ product }) => {
+  const router = useRouter();
+
+  // Agar sahifa hali yaratilmagan bo'lsa
+  if (router.isFallback) {
+    return <div>Yuklanmoqda...</div>;
+  }
+
+  return (
+    <div>
+      <h1>{product.name}</h1>
+      <Image src={product.imageUrl} alt={product.name} width={500} height={300} />
+      <p>{product.description}</p>
+      <p>Narxi: ${product.price}</p>
+    </div>
+  );
+};
+
+export default ProductPage;
