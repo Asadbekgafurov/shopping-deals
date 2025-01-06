@@ -1,4 +1,3 @@
-"use client"
 import CustomImage from "@/components/image";
 import { notFound } from "next/navigation";
 
@@ -8,16 +7,9 @@ interface Props {
   };
 }
 
-const ProductDetailedPage = async ({ params }: Props) => {
-  const { id } = params;
-
+const ProductDetailedPage = async ({ params: { id } }: Props) => {
   try {
     const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch product data");
-    }
-
     const product = await res.json();
 
     return (
