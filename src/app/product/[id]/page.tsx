@@ -1,5 +1,4 @@
-import { GetStaticProps, GetStaticPaths, NextPage } from 'next';
-import { useRouter } from 'next/router';
+import { useParams } from 'next/navigation';
 import Image from 'next/image';
 
 interface Product {
@@ -10,55 +9,40 @@ interface Product {
   price: number;
 }
 
-interface PageProps {
-  product: Product;
-}
+const fetchProduct = async (id: string): Promise<Product> => {
+  const res = await fetch(`https://api.example.com/products/${id}`, {
+    cache: 'no-store', // Dinamik yuklash uchun.
+  });
 
-export const getStaticProps: GetStaticProps<PageProps> = async ({ params }) => {
-  const { id } = params as { id: string };
-
-  // Mahsulot ma'lumotlarini olish
-  const res = await fetch(`https://api.example.com/products/${id}`);
-  const product: Product = await res.json();
-
-  return {
-    props: {
-      product,
-    },
-  };
-};
-
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Mavjud mahsulot IDlarini olish
-  const res = await fetch('https://api.example.com/products');
-  const products: Product[] = await res.json();
-
-  const paths = products.map((product) => ({
-    params: { id: product.id },
-  }));
-
-  return {
-    paths,
-    fallback: false,
-  };
-};
-
-const ProductPage: NextPage<PageProps> = ({ product }) => {
-  const router = useRouter();
-
-  // Agar sahifa hali yaratilmagan bo'lsa
-  if (router.isFallback) {
-    return <div>Yuklanmoqda...</div>;
+  if (!res.ok) {
+    throw new Error('Mahsulot ma’lumotlari yuklanmadi.');
   }
 
-  return (
-    <div>
-      <h1>{product.name}</h1>
-      <Image src={product.imageUrl} alt={product.name} width={500} height={300} />
-      <p>{product.description}</p>
-      <p>Narxi: ${product.price}</p>
-    </div>
-  );
+  return res.json();
+};
+
+const ProductPage = async () => {
+  const params = useParams();
+  const productId = params?.id as string;
+
+  if (!productId) {
+    return <div>Mahsulot ID topilmadi.</div>;
+  }
+
+  try {
+    const product = await fetchProduct(productId);
+
+    return (
+      <div>
+        <h1>{product.name}</h1>
+        <Image src={product.imageUrl} alt={product.name} width={500} height={300} />
+        <p>{product.description}</p>
+        <p>Narxi: ${product.price}</p>
+      </div>
+    );
+  } catch (error) {
+    return <div>Mahsulotni yuklashda xatolik yuz berdi.</div>;
+  }
 };
 
 export default ProductPage;
