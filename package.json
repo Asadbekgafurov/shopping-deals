@@ -28,5 +28,10 @@
   },
   "devDependencies": {
     "@types/react-stars": "^2.2.4"
-  }
+  },
+  "scripts": {
+  "build": "next build",
+  "dev": "next dev",
+  "start": "next start"
+}
 }
