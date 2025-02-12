@@ -13,16 +13,28 @@ interface Product {
     count: number;
   };
 }
+
 interface Props {
-  params: {
-    id: string;
-  };
+  params: Record<string, string>;
 }
 
-const ProductDetailedPage = async ({ params: { id } }: Props) => {
+const ProductDetailedPage = async ({ params }: Props) => {
+  if (!params?.id) {
+    return notFound();
+  }
+
+  const id = params.id; // ID string bo‘lishiga ishonch hosil qilish
+
   try {
-    const res = await fetch(`https://fakestoreapi.com/products/${id}`);
-    const product = await res.json();
+    const res = await fetch(`https://fakestoreapi.com/products/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      return notFound();
+    }
+
+    const product: Product = await res.json();
 
     return (
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-8 px-4 mt-48 pb-10">
@@ -43,7 +55,8 @@ const ProductDetailedPage = async ({ params: { id } }: Props) => {
       </div>
     );
   } catch (error) {
-    notFound();
+    console.error("Failed to fetch product:", error);
+    return notFound();
   }
 };
 
