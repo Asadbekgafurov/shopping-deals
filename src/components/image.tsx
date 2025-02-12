@@ -1,23 +1,11 @@
 "use client";
 
+import { ProductType } from "@/interfaces";
 import Image from "next/image";
 import { FC, useState } from "react";
 
-interface ProductType {
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category: string;
-  image: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
-}
-
 interface Props {
-  product: ProductType; // `product` tipi aniq berilishi kerak
+  product: ProductType;
   fill?: boolean;
 }
 

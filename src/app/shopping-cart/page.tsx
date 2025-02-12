@@ -186,7 +186,7 @@ const ShoppingCart = () => {
                 </p>
               </div>
               <div className="flex justify-between">
-                <p className="text-gray-700">Shopping</p>
+                <p className="text-gray-700">Shipping</p>
                 <p className="text-gray-700">
                   {(10).toLocaleString("en-US", {
                     currency: "usd",
@@ -234,10 +234,11 @@ const ShoppingCart = () => {
               </div>
             </div>
             <h1 className="mt-5 text-[36px] font-bold text-slate-800 lg:text-[50px]">
-              Shopping cartda hech nima yoq
+              Shopping cart is empty
             </h1>
             <p className="text-slate-600 mt-5 lg:text-lg">
-              Bu tugma orqali siz mavjud mahsulotlarni ko'rishingiz mumkin
+              The page you are looking for doesn't exist or <br />
+              has been removed.
             </p>
             <Link href={"/products"}>
               <button className="button bg-blue-600 mt-4 text-white border-transparent hover:border-blue-600 hover:bg-transparent hover:text-black">
