@@ -13,6 +13,15 @@ const ShoppingCart = () => {
     JSON.parse(localStorage.getItem("carts") as string) || []
   );
 
+  useEffect(() => {
+    const [cart, setCart] = useState<string | null>(null);
+
+    if (typeof window !== "undefined") {
+      const savedCart = localStorage.getItem("cart");
+      setCart(savedCart);
+    }
+  }, []);
+
   const removeProduct = (id: number) => {
     const updatedCart = products.filter((product) => product.id !== id);
     localStorage.setItem("carts", JSON.stringify(updatedCart));
