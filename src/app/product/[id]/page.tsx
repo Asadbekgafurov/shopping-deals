@@ -1,6 +1,18 @@
 import CustomImage from "@/components/image";
 import { notFound } from "next/navigation";
 
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: {
+    rate: number;
+    count: number;
+  };
+}
 interface Props {
   params: {
     id: string;
